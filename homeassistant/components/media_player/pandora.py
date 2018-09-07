@@ -43,7 +43,7 @@ CURRENT_SONG_PATTERN = re.compile(r'"(.*?)"\s+by\s+"(.*?)"\son\s+"(.*?)"',
 STATION_PATTERN = re.compile(r'Station\s"(.+?)"', re.MULTILINE)
 
 
-def setup_platform(hass, config, add_devices, discovery_info=None):
+def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the Pandora media player platform."""
     if not _pianobar_exists():
         return False
@@ -55,7 +55,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         pandora.turn_off()
 
     hass.bus.listen_once(EVENT_HOMEASSISTANT_STOP, _stop_pianobar)
-    add_devices([pandora])
+    add_entities([pandora])
 
 
 class PandoraMediaPlayer(MediaPlayerDevice):
@@ -253,9 +253,11 @@ class PandoraMediaPlayer(MediaPlayerDevice):
             _LOGGER.warning("On unexpected station list page")
             self._pianobar.sendcontrol('m')  # press enter
             self._pianobar.sendcontrol('m')  # do it again b/c an 'i' got in
+            # pylint: disable=assignment-from-none
             response = self.update_playing_status()
         elif match_idx == 3:
             _LOGGER.debug("Received new playlist list")
+            # pylint: disable=assignment-from-none
             response = self.update_playing_status()
         else:
             response = self._pianobar.before.decode('utf-8')

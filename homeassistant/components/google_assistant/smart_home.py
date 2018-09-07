@@ -1,5 +1,5 @@
 """Support for Google Assistant Smart Home API."""
-import collections
+from collections.abc import Mapping
 from itertools import product
 import logging
 
@@ -52,7 +52,7 @@ DOMAIN_TO_GOOGLE_TYPES = {
 def deep_update(target, source):
     """Update a nested dictionary with another nested dictionary."""
     for key, value in source.items():
-        if isinstance(value, collections.Mapping):
+        if isinstance(value, Mapping):
             target[key] = deep_update(target.get(key, {}), value)
         else:
             target[key] = value
@@ -79,7 +79,7 @@ class _GoogleEntity:
         domain = state.domain
         features = state.attributes.get(ATTR_SUPPORTED_FEATURES, 0)
 
-        return [Trait(state) for Trait in trait.TRAITS
+        return [Trait(self.hass, state) for Trait in trait.TRAITS
                 if Trait.supported(domain, features)]
 
     @callback
@@ -161,7 +161,7 @@ class _GoogleEntity:
         executed = False
         for trt in self.traits():
             if trt.can_execute(command, params):
-                await trt.execute(self.hass, command, params)
+                await trt.execute(command, params)
                 executed = True
                 break
 

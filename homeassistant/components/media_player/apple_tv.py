@@ -31,7 +31,8 @@ SUPPORT_APPLE_TV = SUPPORT_TURN_ON | SUPPORT_TURN_OFF | SUPPORT_PLAY_MEDIA | \
 
 
 @asyncio.coroutine
-def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
+def async_setup_platform(hass, config, async_add_entities,
+                         discovery_info=None):
     """Set up the Apple TV platform."""
     if not discovery_info:
         return
@@ -56,7 +57,7 @@ def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
     if entity not in hass.data[DATA_ENTITIES]:
         hass.data[DATA_ENTITIES].append(entity)
 
-    async_add_devices([entity])
+    async_add_entities([entity])
 
 
 class AppleTvDevice(MediaPlayerDevice):
@@ -103,11 +104,11 @@ class AppleTvDevice(MediaPlayerDevice):
             if state in (const.PLAY_STATE_IDLE, const.PLAY_STATE_NO_MEDIA,
                          const.PLAY_STATE_LOADING):
                 return STATE_IDLE
-            elif state == const.PLAY_STATE_PLAYING:
+            if state == const.PLAY_STATE_PLAYING:
                 return STATE_PLAYING
-            elif state in (const.PLAY_STATE_PAUSED,
-                           const.PLAY_STATE_FAST_FORWARD,
-                           const.PLAY_STATE_FAST_BACKWARD):
+            if state in (const.PLAY_STATE_PAUSED,
+                         const.PLAY_STATE_FAST_FORWARD,
+                         const.PLAY_STATE_FAST_BACKWARD):
                 # Catch fast forward/backward here so "play" is default action
                 return STATE_PAUSED
             return STATE_STANDBY  # Bad or unknown state?
@@ -140,9 +141,9 @@ class AppleTvDevice(MediaPlayerDevice):
             media_type = self._playing.media_type
             if media_type == const.MEDIA_TYPE_VIDEO:
                 return MEDIA_TYPE_VIDEO
-            elif media_type == const.MEDIA_TYPE_MUSIC:
+            if media_type == const.MEDIA_TYPE_MUSIC:
                 return MEDIA_TYPE_MUSIC
-            elif media_type == const.MEDIA_TYPE_TV:
+            if media_type == const.MEDIA_TYPE_TV:
                 return MEDIA_TYPE_TVSHOW
 
     @property
@@ -221,7 +222,7 @@ class AppleTvDevice(MediaPlayerDevice):
             state = self.state
             if state == STATE_PAUSED:
                 return self.atv.remote_control.play()
-            elif state == STATE_PLAYING:
+            if state == STATE_PLAYING:
                 return self.atv.remote_control.pause()
 
     def async_media_play(self):
