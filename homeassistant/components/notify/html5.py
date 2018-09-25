@@ -97,7 +97,8 @@ NOTIFY_CALLBACK_EVENT = 'html5_notification'
 # Badge and timestamp are Chrome specific (not in official spec)
 HTML5_SHOWNOTIFICATION_PARAMETERS = (
     'actions', 'badge', 'body', 'dir', 'icon', 'image', 'lang',
-    'renotify', 'requireInteraction', 'tag', 'timestamp', 'vibrate')
+    'renotify', 'requireInteraction', 'tag', 'timestamp', 'vibrate'
+    'silent')
 
 
 def get_service(hass, config, discovery_info=None):
